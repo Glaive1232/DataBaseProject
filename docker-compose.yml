@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: pwd123
       POSTGRES_DB: construction
     ports:
-      - "8082:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -22,7 +22,7 @@ services:
     command: >
       sh -c "pip install fastapi uvicorn sqlalchemy pg8000 psycopg2-binary alembic && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
-      DATABASE_URL: postgresql+pg8000://pguser:pwd123@postgres:8082/construction
+      DATABASE_URL: postgresql+psycopg2://pguser:pwd123@postgres:5432/construction
     ports:
       - "8000:8000"
     depends_on:

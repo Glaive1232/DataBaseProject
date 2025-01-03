@@ -1,9 +1,17 @@
 import requests
 import random
 from faker import Faker
+from datetime import date, datetime
 
 fake = Faker()
 BASE_URL = "http://localhost:8000"
+
+# Функция для подготовки данных (обработка дат)
+def prepare_data(data):
+    for key, value in data.items():
+        if isinstance(value, (date, datetime)):
+            data[key] = value.isoformat()
+    return data
 
 # Функция для создания заказчиков (Customers)
 def create_customers(num_customers):
@@ -13,11 +21,12 @@ def create_customers(num_customers):
             "total_budget": round(random.uniform(10000, 1000000), 2),
             "additional_info": fake.text(max_nb_chars=100),
         }
+
         response = requests.post(f"{BASE_URL}/customers/", json=customer_data)
         if response.status_code == 200:
             print(f"Created customer: {response.json()['name']}")
         else:
-            print(f"Failed to create customer: {response.text}")
+            print(f"Failed to create customer: {response.status_code} - {response.text}")
 
 # Функция для создания объектов (Construction Objects)
 def create_construction_objects(num_objects, customer_ids):
@@ -30,6 +39,10 @@ def create_construction_objects(num_objects, customer_ids):
             "end_date": fake.date_this_decade(),
             "customer_id": random.choice(customer_ids),
         }
+
+        # Преобразуем даты в сериализуемый формат
+        object_data = prepare_data(object_data)
+
         response = requests.post(f"{BASE_URL}/construction_objects/", json=object_data)
         if response.status_code == 200:
             print(f"Created construction object: {response.json()['name']}")
@@ -70,13 +83,21 @@ def main():
     create_customers(num_customers)
 
     customers_response = requests.get(f"{BASE_URL}/customers/")
-    customer_ids = [customer["id"] for customer in customers_response.json()]
+    if customers_response.status_code == 200:
+        customer_ids = [customer["id"] for customer in customers_response.json()]
+    else:
+        print(f"Failed to fetch customers: {customers_response.status_code} - {customers_response.text}")
+        return
 
     num_objects = 20
     create_construction_objects(num_objects, customer_ids)
 
     objects_response = requests.get(f"{BASE_URL}/construction_objects/")
-    construction_object_ids = [obj["id"] for obj in objects_response.json()]
+    if objects_response.status_code == 200:
+        construction_object_ids = [obj["id"] for obj in objects_response.json()]
+    else:
+        print(f"Failed to fetch construction objects: {objects_response.status_code} - {objects_response.text}")
+        return
 
     num_contractors = 15
     create_contractors(num_contractors, construction_object_ids)

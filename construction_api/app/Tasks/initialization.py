@@ -3,7 +3,7 @@ import pg8000.native
 SUPERUSER = "pguser"
 SUPERUSER_PASSWORD = "pwd123"
 DB_HOST = "localhost"
-DB_PORT = 8082
+DB_PORT = 5432
 
 #Чтобы назначить другого владельца базы данных необходимо создать роль( CREATE ROLE)
 DB_OWNER = "pguser"
