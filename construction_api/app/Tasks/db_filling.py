@@ -2,10 +2,7 @@ import requests
 import random
 from faker import Faker
 
-# Инициализация Faker для генерации данных
 fake = Faker()
-
-# Базовый URL вашего REST API
 BASE_URL = "http://localhost:8000"
 
 # Функция для создания заказчиков (Customers)
@@ -68,25 +65,19 @@ def create_contractors(num_contractors, construction_object_ids):
         else:
             print(f"Failed to create contractor: {response.text}")
 
-# Главная функция
 def main():
-    # Шаг 1: Создать заказчиков
     num_customers = 10
     create_customers(num_customers)
 
-    # Получить всех заказчиков из API
     customers_response = requests.get(f"{BASE_URL}/customers/")
     customer_ids = [customer["id"] for customer in customers_response.json()]
 
-    # Шаг 2: Создать объекты строительства
     num_objects = 20
     create_construction_objects(num_objects, customer_ids)
 
-    # Получить все объекты из API
     objects_response = requests.get(f"{BASE_URL}/construction_objects/")
     construction_object_ids = [obj["id"] for obj in objects_response.json()]
 
-    # Шаг 3: Создать подрядчиков
     num_contractors = 15
     create_contractors(num_contractors, construction_object_ids)
 

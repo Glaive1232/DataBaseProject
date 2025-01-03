@@ -1,9 +1,8 @@
 version: "3.8"
-
 services:
   postgres:
     image: postgres:15
-    container_name: pg-db1
+    container_name: postgres
     restart: always
     environment:
       POSTGRES_USER: pguser
@@ -17,14 +16,13 @@ services:
   fastapi:
     image: python:3.11-slim
     container_name: fastapi-app
-    restart: always
     working_dir: /app
     volumes:
       - ./construction_api/app:/app
     command: >
-        sh -c "pip install fastapi uvicorn sqlalchemy psycopg2-binary alembic && uvicorn main:app --host 0.0.0.0 --port 8000"
+      sh -c "pip install fastapi uvicorn sqlalchemy pg8000 psycopg2-binary alembic && uvicorn main:app --host 0.0.0.0 --port 8000"
     environment:
-      DATABASE_URL: postgresql+pg8000://pguser:pwd123@localhost:8082/construction
+      DATABASE_URL: postgresql+pg8000://pguser:pwd123@postgres:8082/construction
     ports:
       - "8000:8000"
     depends_on:
@@ -32,3 +30,4 @@ services:
 
 volumes:
   postgres_data:
+

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from construction_api.app import models, schemas
+import models, schemas
 
 # Создание подрядчика
 def create_contractor(db: Session, contractor_data: schemas.ContractorCreate):

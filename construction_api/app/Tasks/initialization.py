@@ -16,7 +16,7 @@ def initialize_database():
         # Подключаемся к базе данных postgres как суперпользователь
         connection = pg8000.native.Connection(
             user=SUPERUSER, password=SUPERUSER_PASSWORD, host=DB_HOST,
-            port=DB_PORT, database="pgdb1"
+            port=DB_PORT, database="postgres"
         )
 
         # Создаем базу данных
