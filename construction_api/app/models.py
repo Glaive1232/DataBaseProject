@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Table, Integer, String, Float, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from database import Base
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
 
 # Ассоциативная таблица для связи "многие ко многим" между Подрядчиком и Объектом
 contractor_object_association = Table(
