@@ -2,55 +2,91 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 
+# -------------------- Base Models --------------------
+# These are used for nested relationships to prevent circular references
 
-# -------------------- Contractor --------------------
-
-# Схема для создания подрядчика
-class ContractorCreate(BaseModel):
+class CustomerBase(BaseModel):
     name: str
-    specialization: str
-    num_employees: Optional[int]
-    equipment_level: Optional[str]
-    tools_level: Optional[str]
+    total_budget: Optional[float]
+    additional_info: Optional[str]
 
-
-# Схема для обновления подрядчика
-class ContractorUpdate(BaseModel):
-    name: Optional[str] = None
-    specialization: Optional[str] = None
-    num_employees: Optional[int] = None
-    equipment_level: Optional[str] = None
-    tools_level: Optional[str] = None
-
-
-# Схема для отображения подрядчика
-class Contractor(BaseModel):
-    id: int
-    name: str
-    specialization: str
-    num_employees: Optional[int]
-    equipment_level: Optional[str]
-    tools_level: Optional[str]
-    # Связь с объектами
-    construction_objects: List["ConstructionObject"] = []
-
-    class Config:
-        orm_mode = True
-
-
-# -------------------- ConstructionObject --------------------
-
-# Схема для создания объекта строительства
-class ConstructionObjectCreate(BaseModel):
+class ConstructionObjectBase(BaseModel):
     name: str
     type: Optional[str]
     cost: Optional[float]
     start_date: Optional[date]
     end_date: Optional[date]
-    customer_id: int  # ID заказчика
+    customer_id: Optional[int]
 
+class ContractorBase(BaseModel):
+    name: str
+    specialization: str
+    num_employees: Optional[int]
+    equipment_level: Optional[str]
+    tools_level: Optional[str]
 
-# Схема для обновления объекта строительства
+# -------------------- Simple Response Models --------------------
+# These models don't include relationships
+
+class CustomerSimple(CustomerBase):
+    id: int
+
+    class Config:
+        from_attributes = True  # new name for orm_mode
+
+class ConstructionObjectSimple(ConstructionObjectBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class ContractorSimple(ContractorBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+# -------------------- Full Response Models --------------------
+# These include relationships but use the Simple models to prevent circular references
+
+class ConstructionObject(ConstructionObjectBase):
+    id: int
+    customer: Optional[CustomerSimple]
+    contractors: List[ContractorSimple] = []
+
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
+class Customer(CustomerBase):
+    id: int
+    construction_objects: List[ConstructionObjectSimple] = []
+
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
+class Contractor(ContractorBase):
+    id: int
+    construction_objects: List[ConstructionObjectSimple] = []
+
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
+# -------------------- Create/Update Models --------------------
+
+class CustomerCreate(CustomerBase):
+    pass
+
+class CustomerUpdate(BaseModel):
+    name: Optional[str] = None
+    total_budget: Optional[float] = None
+    additional_info: Optional[str] = None
+
+class ConstructionObjectCreate(ConstructionObjectBase):
+    customer_id: int  # Make this required for creation
+
 class ConstructionObjectUpdate(BaseModel):
     name: Optional[str] = None
     type: Optional[str] = None
@@ -59,48 +95,12 @@ class ConstructionObjectUpdate(BaseModel):
     end_date: Optional[date] = None
     customer_id: Optional[int] = None
 
+class ContractorCreate(ContractorBase):
+    pass
 
-# Схема для отображения объекта строительства
-class ConstructionObject(BaseModel):
-    id: int
-    name: str
-    type: Optional[str]
-    cost: Optional[float]
-    start_date: Optional[date]
-    end_date: Optional[date]
-    customer_id: Optional[int]
-    # Связи
-    customer: Optional["Customer"]
-    contractors: List[Contractor] = []
-
-    class Config:
-        orm_mode = True
-
-
-# -------------------- Customer --------------------
-
-# Схема для создания заказчика
-class CustomerCreate(BaseModel):
-    name: str
-    total_budget: Optional[float]
-    additional_info: Optional[str]
-
-
-# Схема для обновления заказчика
-class CustomerUpdate(BaseModel):
+class ContractorUpdate(BaseModel):
     name: Optional[str] = None
-    total_budget: Optional[float] = None
-    additional_info: Optional[str] = None
-
-
-# Схема для отображения заказчика
-class Customer(BaseModel):
-    id: int
-    name: str
-    total_budget: Optional[float]
-    additional_info: Optional[str]
-    # Связь с объектами
-    construction_objects: List[ConstructionObject] = []
-
-    class Config:
-        orm_mode = True
+    specialization: Optional[str] = None
+    num_employees: Optional[int] = None
+    equipment_level: Optional[str] = None
+    tools_level: Optional[str] = None

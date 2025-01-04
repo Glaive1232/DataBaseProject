@@ -5,13 +5,6 @@ from sqlalchemy import pool
 
 from alembic import context
 
-import os
-import sys
-
-# Добавляем путь до корневой директории проекта
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'app'))
-
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -28,7 +21,6 @@ if config.config_file_name is not None:
 
 from construction_api.app.models import Base
 target_metadata = Base.metadata
-
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

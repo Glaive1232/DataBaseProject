@@ -5,7 +5,7 @@ app = FastAPI()
 
 # Подключение роутеров
 app.include_router(contractors.router, prefix="/contractors", tags=["Contractors"])
-app.include_router(objects.router, prefix="/objects", tags=["Construction Objects"])
+app.include_router(objects.router, prefix="/construction_objects", tags=["Construction Objects"])
 app.include_router(customers.router, prefix="/customers", tags=["Customers"])
 
 if __name__ == "__main__":

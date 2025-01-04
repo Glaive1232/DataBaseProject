@@ -6,7 +6,6 @@ from datetime import date, datetime
 fake = Faker()
 BASE_URL = "http://localhost:8000"
 
-# Функция для подготовки данных (обработка дат)
 def prepare_data(data):
     for key, value in data.items():
         if isinstance(value, (date, datetime)):
@@ -40,7 +39,6 @@ def create_construction_objects(num_objects, customer_ids):
             "customer_id": random.choice(customer_ids),
         }
 
-        # Преобразуем даты в сериализуемый формат
         object_data = prepare_data(object_data)
 
         response = requests.post(f"{BASE_URL}/construction_objects/", json=object_data)
@@ -59,6 +57,7 @@ def create_contractors(num_contractors, construction_object_ids):
             "equipment_level": fake.word(),
             "tools_level": fake.word(),
         }
+
         response = requests.post(f"{BASE_URL}/contractors/", json=contractor_data)
         if response.status_code == 200:
             contractor = response.json()
