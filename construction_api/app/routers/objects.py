@@ -14,11 +14,11 @@ from schemas import (
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ConstructionObjectSimple])
+@router.get("/", response_model=List[ConstructionObject])
 def get_all_objects(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_construction_objects(db, skip=skip, limit=limit)
 
-@router.get("/{id}", response_model=ConstructionObjectSimple)
+@router.get("/{id}", response_model=ConstructionObject)
 def get_object(id: int, db: Session = Depends(get_db)):
     obj = crud.get_construction_object(db, object_id=id)
     if not obj:

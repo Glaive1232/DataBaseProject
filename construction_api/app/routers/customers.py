@@ -14,11 +14,11 @@ from schemas import (
 
 router = APIRouter()
 
-@router.get("/", response_model=List[CustomerSimple])
+@router.get("/", response_model=List[Customer])
 def get_all_customers(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_customers(db, skip=skip, limit=limit)
 
-@router.get("/{id}", response_model=CustomerSimple)
+@router.get("/{id}", response_model=Customer)
 def get_customer(id: int, db: Session = Depends(get_db)):
     customer = crud.get_customer(db, customer_id=id)
     if not customer:

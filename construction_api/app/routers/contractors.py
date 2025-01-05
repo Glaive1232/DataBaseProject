@@ -15,11 +15,11 @@ from schemas import (
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ContractorSimple])
+@router.get("/", response_model=List[Contractor])
 def get_all_contractors(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_contractors(db, skip=skip, limit=limit)
 
-@router.get("/{id}", response_model=ContractorSimple)
+@router.get("/{id}", response_model=Contractor)
 def get_contractor(id: int, db: Session = Depends(get_db)):
     contractor = crud.get_contractor(db, contractor_id=id)
     if not contractor:
