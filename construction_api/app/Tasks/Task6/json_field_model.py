@@ -2,6 +2,7 @@ from sqlalchemy import Column, Table, Integer, String, Float, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.dialects.postgresql import JSONB
 
 Base = declarative_base()
 
@@ -12,7 +13,6 @@ contractor_object_association = Table(
     Column("contractor_id", Integer, ForeignKey("contractors.id"), primary_key=True),
     Column("object_id", Integer, ForeignKey("construction_objects.id"), primary_key=True),
 )
-
 
 # Модель для подрядчиков
 class Contractor(Base):
@@ -25,7 +25,9 @@ class Contractor(Base):
     equipment_level = Column(String)
     tools_level = Column(String)
 
-    # Связь "многие ко многим" с объектами
+    json_data = Column(JSONB, nullable=True)
+
+
     construction_objects = relationship(
         "ConstructionObject",
         secondary=contractor_object_association,
@@ -43,14 +45,14 @@ class ConstructionObject(Base):
     start_date = Column(Date)
     end_date = Column(Date)
 
-    # Связь "многие ко многим" с подрядчиками
+    json_data = Column(JSONB, nullable=True)
+
     contractors = relationship(
         "Contractor",
         secondary=contractor_object_association,
         back_populates="construction_objects"
     )
 
-    # Связь "многие к одному" с заказчиком
     customer_id = Column(Integer, ForeignKey("customers.id"))
     customer = relationship("Customer", back_populates="construction_objects")
 
@@ -64,5 +66,6 @@ class Customer(Base):
     total_budget = Column(Float)
     additional_info = Column(String)
 
-    # Связь "один ко многим" с объектами
+    json_data = Column(JSONB, nullable=True)
+
     construction_objects = relationship("ConstructionObject", back_populates="customer")
