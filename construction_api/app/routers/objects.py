@@ -25,7 +25,7 @@ def get_object(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Object not found")
     return obj
 
-@router.post("/", response_model=ConstructionObjectCreate)
+@router.post("/", response_model=ConstructionObject)
 def create_object(obj: ConstructionObjectCreate, db: Session = Depends(get_db)):
     return crud.create_construction_object(db, obj)
 

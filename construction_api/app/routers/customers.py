@@ -25,7 +25,7 @@ def get_customer(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
 
-@router.post("/", response_model=CustomerCreate)
+@router.post("/", response_model=Customer)
 def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
     return crud.create_customer(db, customer)
 

@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 
+class LinkObject(BaseModel):
+    object_id: int
 # -------------------- Base Models --------------------
 # These are used for nested relationships to prevent circular references
 
